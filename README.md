@@ -74,7 +74,3 @@ Waiting for feedback
 1. After database base migration, run `npm run test` to run test.
 
 ## [Api documentation](./API.md)
-
-## Documentation
-
-1. [Relational database schema](https://dbdiagram.io/d/learnlyapp-67584005e9daa85aca423534)
