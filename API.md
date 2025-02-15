@@ -114,3 +114,4 @@ Response:
 - 204 No Content: Updates profile for JWT.
 - 401 Unauthorized: Missing or invalid JWT.
 - 404 Not Found: Profile not found for associated JWT.
+- 409 Conflict: If an error occurs updating profile.
