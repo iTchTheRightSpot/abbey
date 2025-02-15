@@ -5,6 +5,7 @@ import * as ex from '@exceptions/index';
 
 export interface IRelationshipService {
   follow(j: c.JwtObject, payload: c.FollowPayload): Promise<void>;
+  unfollow(j: c.JwtObject, payload: c.FollowPayload): Promise<void>;
 }
 
 export class RelationshipService implements IRelationshipService {
@@ -71,5 +72,9 @@ export class RelationshipService implements IRelationshipService {
         `error following user with id ${o.user_id.trim()}`
       );
     }
+  }
+
+  unfollow(j: c.JwtObject, payload: c.FollowPayload): Promise<void> {
+    return Promise.resolve(undefined);
   }
 }

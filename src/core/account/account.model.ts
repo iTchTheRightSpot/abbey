@@ -22,3 +22,10 @@ export class AccountPayload {
   @MaxLength(30, { message: 'date of birth must be at most 30 characters' })
   dob: string;
 }
+
+export interface AccountResponse {
+  name: string;
+  dob: string;
+  email: string;
+  uuid: string;
+}

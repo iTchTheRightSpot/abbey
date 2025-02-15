@@ -20,6 +20,7 @@ export class AccountHandler {
 
   private readonly register = () => {
     this.router.get('/account', this.account);
+    this.router.get('/accounts', this.accounts);
     this.router.patch(
       '/account',
       m.middleware.validatePayload(this.logger, c.AccountPayload),
@@ -41,6 +42,26 @@ export class AccountHandler {
     }
     try {
       const p = await this.service.account(req.jwtClaim!.obj);
+      res.status(200).send(p);
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  private readonly accounts: RequestHandler = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    if (!req.jwtClaim) {
+      res.status(401).send({
+        message: 'full authentication is required to access this resource',
+        status: 401
+      });
+      return;
+    }
+    try {
+      const p = await this.service.accounts(req.jwtClaim!.obj);
       res.status(200).send(p);
     } catch (e) {
       next(e);

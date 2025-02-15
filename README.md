@@ -24,6 +24,7 @@ sticking to firm and consistent aesthetic choices.
 2. A video demoing the application - frontend (browser) / backend (postman) / mobile (emulator).
 
 ## Implemented Functionalities
+
 1. Authentication:
    - Registration, Login, Logout.
      - JWT authorization using Auth0 middleware.

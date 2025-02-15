@@ -7,6 +7,7 @@ export interface IAccountStore {
   save(obj: c.AccountEntity): Promise<c.AccountEntity>;
   update(obj: c.AccountEntity): Promise<c.AccountEntity>;
   accountByUUID(uuid: string): Promise<c.AccountEntity | undefined>;
+  all(): Promise<c.AccountEntity[]>;
 }
 
 export class AccountStore implements IAccountStore {
@@ -115,6 +116,23 @@ export class AccountStore implements IAccountStore {
         this.logger.log('account updated');
       } catch (e) {
         this.logger.error(`error updating account: ${e}`);
+        reject(e);
+      }
+    });
+  }
+
+  all(): Promise<c.AccountEntity[]> {
+    return new Promise<c.AccountEntity[]>(async (resolve, reject) => {
+      try {
+        const db = await this.db.exec('SELECT * FROM account');
+        if (db.rows.length === 0) return resolve([]);
+
+        const arr = db.rows as c.AccountEntity[];
+        arr.forEach((a) => (a.account_id = Number(a.account_id)));
+
+        resolve(arr);
+      } catch (e) {
+        this.logger.error('error retrieving all accounts', e);
         reject(e);
       }
     });

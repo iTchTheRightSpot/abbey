@@ -14,7 +14,8 @@ describe('account handler', () => {
   let pool: Pool;
   let adapters: e.Adapters;
   let services: e.ServicesRegistry;
-  let dummy: c.AccountEntity;
+  let acc1: c.AccountEntity;
+  let acc2: c.AccountEntity;
 
   beforeAll(async () => {
     pool = poolInstance(logger);
@@ -23,11 +24,19 @@ describe('account handler', () => {
     adapters = e.initializeAdapters(logger, db, tx);
 
     const u = uuid();
-    dummy = await adapters.account.save(<c.AccountEntity>{
+    acc1 = await adapters.account.save(<c.AccountEntity>{
       name: 'iTchTheRightSpot',
       dob: '15/01/2000',
       email: `${u}@email.com`,
       uuid: u,
+      password: 'password'
+    });
+
+    acc2 = await adapters.account.save(<c.AccountEntity>{
+      name: 'u2',
+      dob: '15/01/2001',
+      email: `${u}1@email.com`,
+      uuid: uuid(),
       password: 'password'
     });
 
@@ -50,7 +59,7 @@ describe('account handler', () => {
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: dummy.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
         ])
         .expect(200));
 
@@ -73,7 +82,7 @@ describe('account handler', () => {
         .set('Accept', 'application/json')
         .send({ name: 'Wayne Rooney', dob: '14/12/2025' })
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: dummy.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
         ])
         .expect(204));
 
@@ -88,4 +97,17 @@ describe('account handler', () => {
         ])
         .expect(404));
   });
+
+  it('should retrieve all accounts', async () =>
+    await request(app)
+      .get(`${u.env.ROUTE_PREFIX}accounts`)
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .set('Cookie', [
+        `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+      ])
+      .expect(200)
+      .expect([
+        { uuid: acc2.uuid, name: acc2.name, dob: acc2.dob, email: acc2.email }
+      ]));
 });
