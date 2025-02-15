@@ -23,9 +23,13 @@ sticking to firm and consistent aesthetic choices.
 1. Production ready code publicly hosted on GitHub.
 2. A video demoing the application - frontend (browser) / backend (postman) / mobile (emulator).
 
-## Assumptions
-
-Waiting for feedback
+## Implemented Functionalities
+1. Authentication:
+   - Registration, Login, Logout.
+     - JWT authorization using Auth0 middleware.
+2. User able to update & retrieve account details and also retrieve a list of other users.
+3. Social interaction between accounts/users via following each other.
+   - If both users follow each other, they automatically become friends.
 
 ## Pre-requisite
 
