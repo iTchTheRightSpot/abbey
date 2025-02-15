@@ -9,25 +9,25 @@ import * as u from '@utils/index';
 import * as c from '@core/index';
 import * as m from '@abbey/middlewares';
 
-export class ProfileHandler {
+export class AccountHandler {
   constructor(
     private readonly router: Router,
     private readonly logger: u.ILogger,
-    private readonly service: c.IProfileService
+    private readonly service: c.IAccountService
   ) {
     this.register();
   }
 
   private readonly register = () => {
-    this.router.get('/profile', this.profile);
+    this.router.get('/account', this.account);
     this.router.patch(
-      '/profile',
-      m.middleware.validatePayload(this.logger, c.ProfilePayload),
+      '/account',
+      m.middleware.validatePayload(this.logger, c.AccountPayload),
       this.update
     );
   };
 
-  private readonly profile: RequestHandler = async (
+  private readonly account: RequestHandler = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -37,7 +37,7 @@ export class ProfileHandler {
       return;
     }
     try {
-      const p = await this.service.profile(req.jwtClaim!.obj);
+      const p = await this.service.account(req.jwtClaim!.obj);
       res.status(200).send(p);
     } catch (e) {
       next(e);
@@ -56,7 +56,7 @@ export class ProfileHandler {
     try {
       await this.service.update(
         req.jwtClaim!.obj,
-        req.body as c.ProfilePayload
+        req.body as c.AccountPayload
       );
       res.status(204).send();
     } catch (e) {

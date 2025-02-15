@@ -1,7 +1,7 @@
 import { IsDefined, IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
-export interface ProfileEntity {
-  profile_id: number;
+export interface AccountEntity {
+  account_id: number;
   name: string;
   dob: string;
   email: string;
@@ -9,7 +9,7 @@ export interface ProfileEntity {
   password: string;
 }
 
-export class ProfilePayload {
+export class AccountPayload {
   @IsDefined({ message: 'name cannot be missing' })
   @IsNotEmpty({ message: 'name cannot be empty' })
   @IsString({ message: 'name has to be a string' })

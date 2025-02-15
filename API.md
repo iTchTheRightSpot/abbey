@@ -64,11 +64,11 @@ Response:
 - 204 No Content: Sets cookie max-age to -1 (browser clears the cookie).
 - 401 Unauthorized: Missing or invalid JWT.
 
-### GET PROFILE
+### GET ACCOUNT
 
-Retrieves the authenticated user's profile. Requires the user to have a valid JWT:
+Retrieves the authenticated user's account. Requires the user to have a valid JWT:
 
-**Endpoint:** /api/v1/profile
+**Endpoint:** /api/v1/account
 
 Headers:
 
@@ -77,9 +77,9 @@ Headers:
 
 Response:
 
-- 200 OK: Successfully fetched the profile details for JWT.
+- 200 OK: Successfully fetched the account details for JWT.
 - 401 Unauthorized: Missing or invalid JWT.
-- 404 Not Found: Profile not found for associated JWT.
+- 404 Not Found: Account not found for associated JWT.
 
 ```json
 {
@@ -89,11 +89,11 @@ Response:
 }
 ```
 
-### PATCH PROFILE
+### PATCH ACCOUNT
 
-Updates the user's profile. Requires the user to have a valid JWT:
+Updates the user's account. Requires the user to have a valid JWT:
 
-**Endpoint:** /api/v1/profile
+**Endpoint:** /api/v1/account
 
 **Request body:**
 
@@ -111,7 +111,7 @@ Headers:
 
 Response:
 
-- 204 No Content: Updates profile for JWT.
+- 204 No Content: Updates account for JWT.
 - 401 Unauthorized: Missing or invalid JWT.
-- 404 Not Found: Profile not found for associated JWT.
-- 409 Conflict: If an error occurs updating profile.
+- 404 Not Found: Account not found for associated JWT.
+- 409 Conflict: If an error occurs updating account.

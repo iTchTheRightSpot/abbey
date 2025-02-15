@@ -8,13 +8,13 @@ import * as c from '@core/index';
 import { poolInstance, truncate } from '@mock/pool';
 import { v4 as uuid } from 'uuid';
 
-describe('profile handler', () => {
+describe('account handler', () => {
   const logger = new u.DevelopmentLogger();
   let app: Application;
   let pool: Pool;
   let adapters: e.Adapters;
   let services: e.ServicesRegistry;
-  let dummy: c.ProfileEntity;
+  let dummy: c.AccountEntity;
 
   beforeAll(async () => {
     pool = poolInstance(logger);
@@ -23,7 +23,7 @@ describe('profile handler', () => {
     adapters = e.initializeAdapters(logger, db, tx);
 
     const u = uuid();
-    dummy = await adapters.profileStore.save(<c.ProfileEntity>{
+    dummy = await adapters.account.save(<c.AccountEntity>{
       name: 'iTchTheRightSpot',
       dob: '15/01/2000',
       email: `${u}@email.com`,
@@ -43,10 +43,10 @@ describe('profile handler', () => {
   const tokenBuilder = async (obj: c.JwtObject) =>
     await services.jwt.encode(obj, u.twoDaysInSeconds);
 
-  describe('retrieve profile', () => {
+  describe('retrieve account', () => {
     it('success', async () =>
       await request(app)
-        .get(`${u.env.ROUTE_PREFIX}profile`)
+        .get(`${u.env.ROUTE_PREFIX}account`)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
         .set('Cookie', [
@@ -54,21 +54,21 @@ describe('profile handler', () => {
         ])
         .expect(200));
 
-    it('fail. profile not found', async () =>
+    it('fail. account not found', async () =>
       await request(app)
-        .get(`${u.env.ROUTE_PREFIX}profile`)
+        .get(`${u.env.ROUTE_PREFIX}account`)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: 'profile.uuid' })).token}`
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: 'account.uuid' })).token}`
         ])
         .expect(404));
   });
 
-  describe('updating profile', () => {
+  describe('updating account', () => {
     it('success', async () =>
       await request(app)
-        .patch(`${u.env.ROUTE_PREFIX}profile`)
+        .patch(`${u.env.ROUTE_PREFIX}account`)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
         .send({ name: 'Wayne Rooney', dob: '14/12/2025' })
@@ -77,9 +77,9 @@ describe('profile handler', () => {
         ])
         .expect(204));
 
-    it('fail. profile not found', async () =>
+    it('fail. account not found', async () =>
       await request(app)
-        .patch(`${u.env.ROUTE_PREFIX}profile`)
+        .patch(`${u.env.ROUTE_PREFIX}account`)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
         .send({ name: 'Frank White', dob: '14/12/2025' })

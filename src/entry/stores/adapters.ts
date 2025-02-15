@@ -7,7 +7,8 @@ import * as c from '@core/index';
  * Provides access to specific data stores and optional transaction management.
  */
 export interface Adapters {
-  profileStore: c.IProfileStore;
+  account: c.IAccountStore;
+  relationship: c.IRelationshipStore;
   transaction?: e.ITransactionProvider;
 }
 
@@ -23,6 +24,7 @@ export const initializeAdapters = (
   client: e.IDatabaseClient,
   tx?: e.ITransactionProvider
 ): Adapters => ({
-  profileStore: new c.ProfileStore(logger, client),
+  account: new c.AccountStore(logger, client),
+  relationship: new c.RelationShipStore(logger, client),
   transaction: tx
 });

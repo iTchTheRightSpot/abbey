@@ -5,12 +5,13 @@ import * as c from '@core/index';
 
 // holds all classes that expose endpoints
 export const initializeHandlers = (
-  router: Router,
-  logger: u.ILogger,
-  services: e.ServicesRegistry
+  rt: Router,
+  lg: u.ILogger,
+  reg: e.ServicesRegistry
 ) => {
   return {
-    authHandler: new c.AuthHandler(router, logger, services.auth),
-    profileHandler: new c.ProfileHandler(router, logger, services.profile)
+    auth: new c.AuthHandler(rt, lg, reg.auth),
+    account: new c.AccountHandler(rt, lg, reg.account),
+    relationship: new c.RelationshipHandler(rt, lg, reg.relationship)
   };
 };
