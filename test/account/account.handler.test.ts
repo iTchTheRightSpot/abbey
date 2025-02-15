@@ -108,6 +108,11 @@ describe('account handler', () => {
       ])
       .expect(200)
       .expect([
-        { uuid: acc2.uuid, name: acc2.name, dob: acc2.dob, email: acc2.email }
+        {
+          user_id: acc2.uuid,
+          name: acc2.name,
+          dob: acc2.dob,
+          email: acc2.email
+        }
       ]));
 });
