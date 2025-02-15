@@ -85,8 +85,43 @@ Response:
 {
   "name": "John Doe",
   "dob": "01/01/2000",
-  "email": "john@email.com"
+  "email": "john@email.com",
+  "user_id": "6f9f4360-bf97-4c69-947b-2a62a03a700d"
 }
+```
+
+### GET ACCOUNTS
+
+Retrieves all user's account. Requires the user to have a valid JWT:
+
+**Endpoint:** /api/v1/accounts
+
+Headers:
+
+- Authorization: The request should include the JWT token in the cookie. For example:
+  `Cookie: JSESSIONID=<jwt-value>`
+
+Response:
+
+- 200 OK: Successfully fetches all accounts in the database.
+- 401 Unauthorized: Missing or invalid JWT.
+- 404 Not Found: Error retrieving Accounts.
+
+```json
+[
+  {
+    "name": "John Doe",
+    "dob": "01/01/2000",
+    "email": "john@email.com",
+    "user_id": "6f9f4360-bf97-4c69-947b-2a62a03a700d"
+  },
+  {
+    "name": "Frank White",
+    "dob": "01/01/1974",
+    "email": "frank@email.com",
+    "user_id": "3eb61359-7112-4ed8-9296-227ce62a05bc"
+  }
+]
 ```
 
 ### PATCH ACCOUNT
@@ -115,3 +150,57 @@ Response:
 - 401 Unauthorized: Missing or invalid JWT.
 - 404 Not Found: Account not found for associated JWT.
 - 409 Conflict: If an error occurs updating account.
+
+### POST RELATIONSHIP
+
+Follow an account associated to request body user_id. Requires the user to have a valid JWT:
+
+**Endpoint:** /api/v1/relationship
+
+**Request body:**
+
+```json
+{
+  "user_id": "6f9f4360-bf97-4c69-947b-2a62a03a700d"
+}
+```
+
+Headers:
+
+- Authorization: The request should include the JWT token in the cookie. For example:
+  `Cookie: JSESSIONID=<jwt-value>`
+
+Response:
+
+- 201 No Content: User associated to JWT follows request body user_id.
+- 401 Unauthorized: Missing or invalid JWT.
+- 404 Not Found: Account not found for associated JWT or user_id.
+- 400 Bad request: If user is attempting to follow his/herself or someone they already follow .
+- 409 Conflict: If an error occurs following account associated to request body user_id.
+
+### PATCH RELATIONSHIP
+
+Unfollow an account associated to request body user_id. Requires the user to have a valid JWT:
+
+**Endpoint:** /api/v1/relationship
+
+**Request body:**
+
+```json
+{
+  "user_id": "6f9f4360-bf97-4c69-947b-2a62a03a700d"
+}
+```
+
+Headers:
+
+- Authorization: The request should include the JWT token in the cookie. For example:
+  `Cookie: JSESSIONID=<jwt-value>`
+
+Response:
+
+- 204 No Content: User associated to JWT unfollows request body user_id.
+- 401 Unauthorized: Missing or invalid JWT.
+- 404 Not Found: Account not found for associated JWT or user_id.
+- 400 Bad request: If user is attempting to unfollow his/herself or someone they already do not follow.
+- 409 Conflict: If an error occurs unfollowing account associated to request body user_id.

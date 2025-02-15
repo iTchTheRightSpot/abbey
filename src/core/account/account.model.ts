@@ -27,5 +27,5 @@ export interface AccountResponse {
   name: string;
   dob: string;
   email: string;
-  uuid: string;
+  user_id: string;
 }

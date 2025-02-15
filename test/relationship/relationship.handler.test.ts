@@ -80,8 +80,8 @@ describe('relationship handler', () => {
         .set('Cookie', [
           `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
         ])
-        .expect(409)
-        .expect({ message: 'cannot follow yourself', status: 409 }));
+        .expect(400)
+        .expect({ message: 'cannot follow yourself', status: 400 }));
 
     it('fail. invalid user id to follow', async () =>
       await request(app)
@@ -94,6 +94,18 @@ describe('relationship handler', () => {
         ])
         .expect(404));
 
+    it('fail. user1 trying to follow user2 but already follows', async () =>
+      await request(app)
+        .post(`${u.env.ROUTE_PREFIX}relationship`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .send({ user_id: acc2.uuid })
+        .set('Cookie', [
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+        ])
+        .expect(400)
+        .expect({ message: 'already following account', status: 400 }));
+
     it('success. user2 follows back user1', async () =>
       await request(app)
         .post(`${u.env.ROUTE_PREFIX}relationship`)
@@ -104,18 +116,6 @@ describe('relationship handler', () => {
           `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc2.uuid })).token}`
         ])
         .expect(201));
-
-    it('fail. user1 trying to follow user2 but already follows', async () =>
-      await request(app)
-        .post(`${u.env.ROUTE_PREFIX}relationship`)
-        .set('Content-Type', 'application/json')
-        .set('Accept', 'application/json')
-        .send({ user_id: acc1.uuid })
-        .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc2.uuid })).token}`
-        ])
-        .expect(409)
-        .expect({ message: 'already following account', status: 409 }));
 
     it('users should be friends as they follow each other', async () => {
       const u1 =
@@ -133,6 +133,81 @@ describe('relationship handler', () => {
         );
       expect(u2).toBeDefined();
       expect(u2!.status).toEqual(c.RelationshipStatus.FRIEND);
+    });
+  });
+
+  describe('unfollow & unfriending', () => {
+    it('success. user1 unfollows a user2', async () =>
+      await request(app)
+        .patch(`${u.env.ROUTE_PREFIX}relationship`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .send({ user_id: acc2.uuid })
+        .set('Cookie', [
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+        ])
+        .expect(204));
+
+    it('fail. user1 cannot unfollow user1', async () =>
+      await request(app)
+        .patch(`${u.env.ROUTE_PREFIX}relationship`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .send({ user_id: acc1.uuid })
+        .set('Cookie', [
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+        ])
+        .expect(400)
+        .expect({ message: 'cannot unfollow yourself', status: 400 }));
+
+    it('fail. invalid user id to unfollow', async () =>
+      await request(app)
+        .patch(`${u.env.ROUTE_PREFIX}relationship`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .send({ user_id: 'uuid' })
+        .set('Cookie', [
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+        ])
+        .expect(404));
+
+    it('fail. user1 trying to unfollow user2 but already unfollowed', async () =>
+      await request(app)
+        .patch(`${u.env.ROUTE_PREFIX}relationship`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .send({ user_id: acc2.uuid })
+        .set('Cookie', [
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+        ])
+        .expect(400)
+        .expect({ message: 'you are not following account', status: 400 }));
+
+    it('success. user2 unfollows user1', async () =>
+      await request(app)
+        .patch(`${u.env.ROUTE_PREFIX}relationship`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .send({ user_id: acc1.uuid })
+        .set('Cookie', [
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc2.uuid })).token}`
+        ])
+        .expect(204));
+
+    it('users should have no relationship', async () => {
+      const u1 =
+        await adapters.relationship.relationshipByAccountAndFollowingId(
+          acc1.account_id,
+          acc2.account_id
+        );
+      expect(u1).toBeUndefined();
+
+      const u2 =
+        await adapters.relationship.relationshipByAccountAndFollowingId(
+          acc2.account_id,
+          acc1.account_id
+        );
+      expect(u2).toBeUndefined();
     });
   });
 });

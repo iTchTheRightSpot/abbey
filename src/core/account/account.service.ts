@@ -20,7 +20,7 @@ export class AccountService implements IAccountService {
       const p = await this.adapters.account.accountByUUID(obj.user_id.trim());
       if (!p) return Promise.reject(new ex.NotFoundException());
 
-      return { name: p.name, dob: p.dob, email: p.email, uuid: p.uuid };
+      return { name: p.name, dob: p.dob, email: p.email, user_id: p.uuid };
     } catch (e) {
       throw new ex.NotFoundException('account not found');
     }
@@ -46,10 +46,20 @@ export class AccountService implements IAccountService {
   }
 
   async accounts(obj: c.JwtObject): Promise<c.AccountResponse[]> {
-    // assume no pagination
-    const arr = await this.adapters.account.all();
-    return arr
-      .filter((a) => a.uuid !== obj.user_id)
-      .map((a) => ({ name: a.name, dob: a.dob, email: a.email, uuid: a.uuid }));
+    try {
+      // assume no pagination
+      const arr = await this.adapters.account.all();
+      return arr
+        .filter((a) => a.uuid !== obj.user_id)
+        .map((a) => ({
+          name: a.name,
+          dob: a.dob,
+          email: a.email,
+          user_id: a.uuid
+        }));
+    } catch (e) {
+      this.logger.error('error retrieving accounts', e);
+      throw new ex.NotFoundException('error retrieving accounts');
+    }
   }
 }

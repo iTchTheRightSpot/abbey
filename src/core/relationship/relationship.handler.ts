@@ -24,6 +24,11 @@ export class RelationshipHandler {
       m.middleware.validatePayload(this.logger, c.FollowPayload),
       this.follow
     );
+    this.router.patch(
+      '/relationship',
+      m.middleware.validatePayload(this.logger, c.FollowPayload),
+      this.unfollow
+    );
   };
 
   private readonly follow: RequestHandler = async (
@@ -42,6 +47,30 @@ export class RelationshipHandler {
     try {
       await this.service.follow(req.jwtClaim.obj, req.body as c.FollowPayload);
       res.status(201).send();
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  private readonly unfollow: RequestHandler = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    if (!req.jwtClaim) {
+      res.status(401).send({
+        message: 'full authentication is required to access this resource',
+        status: 401
+      });
+      return;
+    }
+
+    try {
+      await this.service.unfollow(
+        req.jwtClaim.obj,
+        req.body as c.FollowPayload
+      );
+      res.status(204).send();
     } catch (e) {
       next(e);
     }

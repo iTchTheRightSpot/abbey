@@ -25,12 +25,20 @@ sticking to firm and consistent aesthetic choices.
 
 ## Implemented Functionalities
 
-1. Authentication:
-   - Registration, Login, Logout.
-     - JWT authorization using Auth0 middleware.
-2. User able to update & retrieve account details and also retrieve a list of other users.
-3. Social interaction between accounts/users via following each other.
-   - If both users follow each other, they automatically become friends.
+1. **Authentication**:
+
+   - **Registration**, **Login**, **Logout**.
+     - JWT authorization using Auth0 middleware for secure authentication.
+
+2. **User Account Management**:
+
+   - Users can **update** and **retrieve** their account details.
+   - Users can **retrieve** a list of other registered users.
+
+3. **Social Interaction**:
+   - Users can **follow** and **unfollow** each other.
+   - If **both users follow each other**, they automatically become **friends**.
+   - If **user1 unfollows user2**, **user2 is no longer considered a friend** of user1.
 
 ## Pre-requisite
 

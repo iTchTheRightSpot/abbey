@@ -1,6 +1,7 @@
 import * as u from '@utils/index';
 import * as e from '@entry/index';
 import * as c from '@core/index';
+import db from 'node-pg-migrate/dist/db';
 
 export interface IRelationshipStore {
   save(o: c.RelationshipEntity): Promise<c.RelationshipEntity>;
@@ -8,7 +9,12 @@ export interface IRelationshipStore {
     user1Id: number,
     user2Id: number
   ): Promise<c.RelationshipEntity | undefined>;
-  updateStatus(accountId: number, status: c.RelationshipStatus): Promise<void>;
+  updateStatus(
+    accountId: number,
+    followingId: number,
+    status: c.RelationshipStatus
+  ): Promise<void>;
+  delete(accountId: number, followingId: number): Promise<number>;
 }
 
 export class RelationShipStore implements IRelationshipStore {
@@ -79,16 +85,42 @@ export class RelationShipStore implements IRelationshipStore {
     );
   }
 
-  updateStatus(accountId: number, status: c.RelationshipStatus): Promise<void> {
-    const q = 'UPDATE relationship SET status = $2 WHERE account_id = $1';
+  updateStatus(
+    accountId: number,
+    followingId: number,
+    status: c.RelationshipStatus
+  ): Promise<void> {
+    const q =
+      'UPDATE relationship SET status = $3 WHERE account_id = $1 AND following_id = $2';
     return new Promise<void>(async (resolve, reject) => {
       try {
-        const db = await this.db.exec(q.trim(), accountId, status);
+        const db = await this.db.exec(q.trim(), accountId, followingId, status);
         if (db.rowCount === 0)
           return reject('relationship not updated. invalid accountId');
         resolve();
       } catch (e) {
         this.logger.error('error updating relationship status', e);
+        reject(e);
+      }
+    });
+  }
+
+  delete(accountId: number, followingId: number): Promise<number> {
+    const q = `
+        WITH deleted as (
+            DELETE FROM relationship WHERE account_id = $1 AND following_id = $2
+            RETURNING account_id
+        )
+        SELECT COUNT(*) FROM deleted;
+    `;
+    return new Promise<number>(async (resolve, reject) => {
+      try {
+        const db = await this.db.exec(q.trim(), accountId, followingId);
+        if (db.rows[0] === null || db.rows[0] === undefined)
+          return reject('no data deleted');
+        resolve(Number(db.rows[0].count));
+      } catch (e) {
+        this.logger.error('error deleting relationship', e);
         reject(e);
       }
     });
