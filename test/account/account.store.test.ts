@@ -34,7 +34,7 @@ describe('account store', () => {
     password: 'password'
   } as c.AccountEntity;
 
-  it('should save to account, role & permission tables', async () =>
+  it('should save to account', async () =>
     expect((await store.save(dummy)).account_id).toBeGreaterThan(0));
 
   it('should retrieve account by email', async () => {

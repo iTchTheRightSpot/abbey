@@ -33,7 +33,10 @@ export class AccountHandler {
     next: NextFunction
   ) => {
     if (!req.jwtClaim) {
-      res.status(401).send();
+      res.status(401).send({
+        message: 'full authentication is required to access this resource',
+        status: 401
+      });
       return;
     }
     try {
@@ -50,14 +53,14 @@ export class AccountHandler {
     next: NextFunction
   ) => {
     if (!req.jwtClaim) {
-      res.status(401).send();
+      res.status(401).send({
+        message: 'full authentication is required to access this resource',
+        status: 401
+      });
       return;
     }
     try {
-      await this.service.update(
-        req.jwtClaim!.obj,
-        req.body as c.AccountPayload
-      );
+      await this.service.update(req.jwtClaim.obj, req.body as c.AccountPayload);
       res.status(204).send();
     } catch (e) {
       next(e);

@@ -59,35 +59,36 @@ describe('relationship handler', () => {
   const tokenBuilder = async (obj: c.JwtObject) =>
     await services.jwt.encode(obj, u.twoDaysInSeconds);
 
-  describe('follow another user', () => {
+  describe('follow & friend request', () => {
     it('success. user1 follows a user2', async () =>
       await request(app)
-        .get(`${u.env.ROUTE_PREFIX}account`)
+        .post(`${u.env.ROUTE_PREFIX}relationship`)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
         .send({ user_id: acc2.uuid })
         .set('Cookie', [
           `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
         ])
-        .expect(200));
+        .expect(201));
 
     it('fail. user1 cannot follow user1', async () =>
       await request(app)
-        .get(`${u.env.ROUTE_PREFIX}account`)
+        .post(`${u.env.ROUTE_PREFIX}relationship`)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
         .send({ user_id: acc1.uuid })
         .set('Cookie', [
           `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
         ])
-        .expect(409));
+        .expect(409)
+        .expect({ message: 'cannot follow yourself', status: 409 }));
 
     it('fail. invalid user id to follow', async () =>
       await request(app)
-        .get(`${u.env.ROUTE_PREFIX}account`)
+        .post(`${u.env.ROUTE_PREFIX}relationship`)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
-        .send({ user_id: 'acc2.uuid' })
+        .send({ user_id: 'uuid' })
         .set('Cookie', [
           `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
         ])
@@ -95,13 +96,43 @@ describe('relationship handler', () => {
 
     it('success. user2 follows back user1', async () =>
       await request(app)
-        .get(`${u.env.ROUTE_PREFIX}account`)
+        .post(`${u.env.ROUTE_PREFIX}relationship`)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
         .send({ user_id: acc1.uuid })
         .set('Cookie', [
           `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc2.uuid })).token}`
         ])
-        .expect(200));
+        .expect(201));
+
+    it('fail. user1 trying to follow user2 but already follows', async () =>
+      await request(app)
+        .post(`${u.env.ROUTE_PREFIX}relationship`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .send({ user_id: acc1.uuid })
+        .set('Cookie', [
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc2.uuid })).token}`
+        ])
+        .expect(409)
+        .expect({ message: 'already following account', status: 409 }));
+
+    it('users should be friends as they follow each other', async () => {
+      const u1 =
+        await adapters.relationship.relationshipByAccountAndFollowingId(
+          acc1.account_id,
+          acc2.account_id
+        );
+      expect(u1).toBeDefined();
+      expect(u1!.status).toEqual(c.RelationshipStatus.FRIEND);
+
+      const u2 =
+        await adapters.relationship.relationshipByAccountAndFollowingId(
+          acc2.account_id,
+          acc1.account_id
+        );
+      expect(u2).toBeDefined();
+      expect(u2!.status).toEqual(c.RelationshipStatus.FRIEND);
+    });
   });
 });
