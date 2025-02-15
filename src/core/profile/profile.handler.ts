@@ -20,7 +20,7 @@ export class ProfileHandler {
 
   private readonly register = () => {
     this.router.get('/profile', this.profile);
-    this.router.post(
+    this.router.patch(
       '/profile',
       m.middleware.validatePayload(this.logger, c.ProfilePayload),
       this.update

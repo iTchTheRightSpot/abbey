@@ -19,8 +19,9 @@ so please keep this in mind when completing your submission. Make it as simple a
 sticking to firm and consistent aesthetic choices.
 
 ## Requirement
+
 1. Production ready code publicly hosted on GitHub.
-2. A video demoing the application - frontend  (browser) / backend (postman) / mobile (emulator).
+2. A video demoing the application - frontend (browser) / backend (postman) / mobile (emulator).
 
 ## Assumptions
 

@@ -68,7 +68,7 @@ describe('profile handler', () => {
   describe('updating profile', () => {
     it('success', async () =>
       await request(app)
-        .post(`${u.env.ROUTE_PREFIX}profile`)
+        .patch(`${u.env.ROUTE_PREFIX}profile`)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
         .send({ name: 'Wayne Rooney', dob: '14/12/2025' })
@@ -79,7 +79,7 @@ describe('profile handler', () => {
 
     it('fail. profile not found', async () =>
       await request(app)
-        .post(`${u.env.ROUTE_PREFIX}profile`)
+        .patch(`${u.env.ROUTE_PREFIX}profile`)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
         .send({ name: 'Frank White', dob: '14/12/2025' })
