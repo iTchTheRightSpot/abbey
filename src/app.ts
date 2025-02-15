@@ -31,7 +31,6 @@ export const createApp = (logger: u.ILogger, services: e.ServicesRegistry) => {
       path: [
         `${u.env.ROUTE_PREFIX}auth/register`,
         `${u.env.ROUTE_PREFIX}auth/login`
-        // new RegExp(`${u.env.ROUTE_PREFIX}auth`)
       ]
     })
   );

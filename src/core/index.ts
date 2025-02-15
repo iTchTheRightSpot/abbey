@@ -5,7 +5,6 @@ export * from './auth/auth.service';
 export * from './auth/jwt.service';
 export * from './auth/password.service';
 export * from './profile/profile.handler';
-export * from './profile/profile.interface.store';
 export * from './profile/profile.model';
 export * from './profile/profile.service';
 export * from './profile/profile.store';

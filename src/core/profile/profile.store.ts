@@ -2,18 +2,24 @@ import * as u from '@utils/index';
 import * as e from '@entry/index';
 import * as c from '@core/index';
 
-export class ProfileStore implements c.IProfileStore {
+export interface IProfileStore {
+  profileByEmail(email: string): Promise<c.ProfileEntity | undefined>;
+  save(obj: c.ProfileEntity): Promise<c.ProfileEntity>;
+}
+
+export class ProfileStore implements IProfileStore {
   constructor(
     private readonly logger: u.ILogger,
     private readonly db: e.IDatabaseClient
   ) {}
 
   profileByEmail(email: string): Promise<c.ProfileEntity | undefined> {
-    const query = `SELECT * FROM profile WHERE email = $1`;
-
     return new Promise<c.ProfileEntity | undefined>(async (resolve, reject) => {
       try {
-        const result = await this.db.exec(query, email.trim());
+        const result = await this.db.exec(
+          'SELECT * FROM profile WHERE email = $1',
+          email.trim()
+        );
         const row = result.rows[0];
         if (row === undefined || row === null) {
           this.logger.error(`no profile with email ${email}`);
@@ -30,7 +36,7 @@ export class ProfileStore implements c.IProfileStore {
     });
   }
 
-  save(obj: c.ProfileEntity): Promise<c.ProfileEntity> {
+  save(p: c.ProfileEntity): Promise<c.ProfileEntity> {
     const query = `
         INSERT INTO profile (name, email, dob, uuid, password)
         VALUES ($1, $2, $3, $4, $5)
@@ -41,19 +47,18 @@ export class ProfileStore implements c.IProfileStore {
       try {
         const res = await this.db.exec(
           query.trim(),
-          obj.name.trim(),
-          obj.email.trim(),
-          obj.dob.trim(),
-          obj.uuid.trim(),
-          obj.password
+          p.name.trim(),
+          p.email.trim(),
+          p.dob.trim(),
+          p.uuid.trim(),
+          p.password
         );
 
-        const row = res.rows[0] as c.ProfileEntity;
-        row.profile_id = Number(row.profile_id);
-        resolve(row);
+        p.profile_id = Number((res.rows[0] as c.ProfileEntity).profile_id);
+        resolve(p);
         this.logger.log('profile saved');
       } catch (e) {
-        this.logger.error(`failed to insert into profile: ${e}`);
+        this.logger.error(`failed to save profile: ${e}`);
         reject(e);
       }
     });

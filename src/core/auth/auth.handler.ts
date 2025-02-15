@@ -15,33 +15,31 @@ export class AuthHandler {
     private readonly logger: u.ILogger,
     private readonly service: c.IAuthService
   ) {
-    this.register();
+    this.registerRoutes();
   }
 
-  private readonly register = () => {
+  private readonly registerRoutes = () => {
     this.router.post(
       '/auth/register',
       m.middleware.validatePayload(this.logger, c.RegisterAccountPayload),
-
-      this.create
+      this.register
     );
     this.router.post(
       '/auth/login',
       m.middleware.validatePayload(this.logger, c.LoginPayload),
       this.login
     );
-
-    this.router.post('/auth/login', this.logout);
+    this.router.post('/auth/logout', this.logout);
   };
 
-  private readonly create: RequestHandler = async (
+  private readonly register: RequestHandler = async (
     req: Request,
     res: Response,
     next: NextFunction
   ) => {
     try {
       await this.service.register(req.body as c.RegisterAccountPayload);
-      res.status(201).send({});
+      res.status(201).send();
     } catch (e) {
       next(e);
     }
@@ -57,12 +55,13 @@ export class AuthHandler {
       res
         .status(204)
         .cookie(u.env.COOKIENAME, obj.token, {
+          path: '/',
           expires: obj.exp,
           httpOnly: true,
           secure: u.env.COOKIESECURE,
           sameSite: u.env.COOKIE_SAMESITE
         })
-        .send({});
+        .send();
     } catch (e) {
       next(e);
     }
@@ -72,5 +71,22 @@ export class AuthHandler {
     req: Request,
     res: Response,
     next: NextFunction
-  ) => {};
+  ) => {
+    const cookie = req.cookies[u.env.COOKIENAME];
+    if (!cookie) {
+      res.status(401).send({});
+      return;
+    }
+    res
+      .cookie(u.env.COOKIENAME, cookie.value, {
+        path: '',
+        httpOnly: true,
+        secure: u.env.COOKIESECURE,
+        sameSite: u.env.COOKIE_SAMESITE,
+        maxAge: -1
+      })
+      .status(204)
+      .send();
+    next();
+  };
 }

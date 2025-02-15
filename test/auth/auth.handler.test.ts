@@ -48,18 +48,20 @@ describe('flow to register, login, and logout', () => {
         .expect(201));
 
     it('login', async () => {
-      await request(app)
+      const r = await request(app)
         .post(`${u.env.ROUTE_PREFIX}auth/login`)
         .send({ email: email, password: password })
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
         .expect(204);
+
+      cookie = r.headers['set-cookie'][0];
     });
 
     it('logout', async () =>
       await request(app)
         .post(`${u.env.ROUTE_PREFIX}auth/logout`)
-        .set('Cookie', [`${u.env.COOKIENAME}=${cookie}`])
+        .set('Cookie', [cookie])
         .expect(204));
   });
 

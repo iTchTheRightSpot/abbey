@@ -11,7 +11,6 @@ const init = () => {
   const tx = new e.TransactionProvider(logger, pool);
   const adapters = e.initializeAdapters(logger, db, tx);
   const services = e.initializeServices(logger, adapters);
-
   return createApp(logger, services);
 };
 

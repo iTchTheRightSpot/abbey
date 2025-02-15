@@ -4,6 +4,7 @@ import { ClassConstructor, plainToInstance } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
 import { UnauthorizedError } from 'express-jwt';
 import * as u from '@utils/index';
+import * as ex from '@exceptions/index';
 
 export const middleware = {
   log: (log: u.ILogger) => logger(log),
@@ -47,7 +48,7 @@ const error = (logger: u.ILogger): express.ErrorRequestHandler => {
     res: Response,
     next: NextFunction
   ) => {
-    if (err instanceof HttpException) {
+    if (err instanceof ex.HttpException) {
       const status = err.status;
       const message = err.message;
       logger.error(err.stack);
