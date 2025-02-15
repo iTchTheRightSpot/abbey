@@ -74,7 +74,7 @@ export class AuthHandler {
   ) => {
     const cookie = req.cookies[u.env.COOKIENAME];
     if (!cookie) {
-      res.status(401).send({});
+      res.status(401).send();
       return;
     }
     res

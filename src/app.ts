@@ -9,7 +9,6 @@ import * as m from '@middlewares//index';
 
 export const createApp = (logger: u.ILogger, services: e.ServicesRegistry) => {
   const app: Application = express();
-
   app.use(m.middleware.log(logger));
   app.use(
     cors({
@@ -34,15 +33,11 @@ export const createApp = (logger: u.ILogger, services: e.ServicesRegistry) => {
       ]
     })
   );
+  app.use(m.middleware.deconstructRequest(logger, services.jwt));
   app.set('trust proxy', 1);
-
-  // routes
   const router = Router();
   e.initializeHandlers(router, logger, services);
-
   app.use(u.env.ROUTE_PREFIX, router);
-
   app.use(m.middleware.error(logger));
-
   return app;
 };

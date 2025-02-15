@@ -19,6 +19,7 @@ export class ProfileHandler {
   }
 
   private readonly register = () => {
+    this.router.get('/profile', this.profile);
     this.router.post(
       '/profile',
       m.middleware.validatePayload(this.logger, c.ProfilePayload),
@@ -26,13 +27,37 @@ export class ProfileHandler {
     );
   };
 
+  private readonly profile: RequestHandler = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    if (!req.jwtClaim) {
+      res.status(401).send();
+      return;
+    }
+    try {
+      const p = await this.service.profile(req.jwtClaim!.obj);
+      res.status(200).send(p);
+    } catch (e) {
+      next(e);
+    }
+  };
+
   private readonly update: RequestHandler = async (
     req: Request,
     res: Response,
     next: NextFunction
   ) => {
+    if (!req.jwtClaim) {
+      res.status(401).send();
+      return;
+    }
     try {
-      await this.service.update(req.body as c.ProfilePayload);
+      await this.service.update(
+        req.jwtClaim!.obj,
+        req.body as c.ProfilePayload
+      );
       res.status(204).send();
     } catch (e) {
       next(e);

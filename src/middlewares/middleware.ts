@@ -5,6 +5,7 @@ import { validate, ValidationError } from 'class-validator';
 import { UnauthorizedError } from 'express-jwt';
 import * as u from '@utils/index';
 import * as ex from '@exceptions/index';
+import * as c from '@core/index';
 
 export const middleware = {
   log: (log: u.ILogger) => logger(log),
@@ -12,7 +13,9 @@ export const middleware = {
   validatePayload: <T extends object>(
     log: u.ILogger,
     type: ClassConstructor<T>
-  ) => validatePayload(log, type)
+  ) => validatePayload(log, type),
+  deconstructRequest: (log: u.ILogger, s: c.IJwtService) =>
+    deconstructRequest(log, s)
 };
 
 // ref docs https://expressjs.com/en/resources/middleware/morgan.html
@@ -87,5 +90,26 @@ const validatePayload = <T extends object>(
           .status(400)
           .send({ status: 400, message: 'catch validation failed' });
       });
+  };
+};
+
+const deconstructRequest = (logger: u.ILogger, service: c.IJwtService) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    if (
+      !req.cookies ||
+      !req.cookies[u.env.COOKIENAME] ||
+      req.path.endsWith('/logout')
+    ) {
+      next();
+      return;
+    }
+
+    try {
+      req.jwtClaim = await service.decode(req.cookies[u.env.COOKIENAME]);
+      next();
+    } catch (e) {
+      logger.error(`${deconstructRequest.name} ${e}`);
+      res.status(401).send({ message: 'unauthorized', status: 401 });
+    }
   };
 };

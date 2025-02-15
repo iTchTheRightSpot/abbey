@@ -18,6 +18,10 @@ rather than having the latest libraries and overly complex code that is hard to 
 so please keep this in mind when completing your submission. Make it as simple as possible, while
 sticking to firm and consistent aesthetic choices.
 
+## Requirement
+1. Production ready code publicly hosted on GitHub.
+2. A video demoing the application - frontend  (browser) / backend (postman) / mobile (emulator).
+
 ## Assumptions
 
 Waiting for feedback

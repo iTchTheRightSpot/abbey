@@ -11,14 +11,13 @@ export interface ServicesRegistry {
 
 // initializes all classes that perform business logic
 export const initializeServices = (
-  logger: u.ILogger,
+  l: u.ILogger,
   ads: e.Adapters
 ): ServicesRegistry => {
-  const jwt = new c.JwtService(logger);
-  const ps = new c.PasswordService(logger);
+  const jwt = new c.JwtService(l);
   return {
-    auth: new c.AuthService(logger, ads, jwt, ps),
-    profile: new c.ProfileService(logger, ads),
+    auth: new c.AuthService(l, ads, jwt, new c.PasswordService(l)),
+    profile: new c.ProfileService(l, ads),
     jwt: jwt
   };
 };

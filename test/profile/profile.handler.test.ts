@@ -43,14 +43,49 @@ describe('profile handler', () => {
   const tokenBuilder = async (obj: c.JwtObject) =>
     await services.jwt.encode(obj, u.twoDaysInSeconds);
 
-  it('should update profile', async () =>
-    await request(app)
-      .post(`${u.env.ROUTE_PREFIX}profile`)
-      .set('Content-Type', 'application/json')
-      .set('Accept', 'application/json')
-      .send({ name: 'Wayne Rooney', dob: '14/12/2025' })
-      .set('Cookie', [
-        `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: dummy.uuid })).token}`
-      ])
-      .expect(204));
+  describe('retrieve profile', () => {
+    it('success', async () =>
+      await request(app)
+        .get(`${u.env.ROUTE_PREFIX}profile`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .set('Cookie', [
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: dummy.uuid })).token}`
+        ])
+        .expect(200));
+
+    it('fail. profile not found', async () =>
+      await request(app)
+        .get(`${u.env.ROUTE_PREFIX}profile`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .set('Cookie', [
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: 'profile.uuid' })).token}`
+        ])
+        .expect(404));
+  });
+
+  describe('updating profile', () => {
+    it('success', async () =>
+      await request(app)
+        .post(`${u.env.ROUTE_PREFIX}profile`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .send({ name: 'Wayne Rooney', dob: '14/12/2025' })
+        .set('Cookie', [
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: dummy.uuid })).token}`
+        ])
+        .expect(204));
+
+    it('fail. profile not found', async () =>
+      await request(app)
+        .post(`${u.env.ROUTE_PREFIX}profile`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .send({ name: 'Frank White', dob: '14/12/2025' })
+        .set('Cookie', [
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: uuid() })).token}`
+        ])
+        .expect(404));
+  });
 });
