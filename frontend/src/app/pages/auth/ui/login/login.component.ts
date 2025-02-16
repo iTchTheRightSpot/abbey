@@ -19,7 +19,7 @@ import { Password } from 'primeng/password';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputText } from 'primeng/inputtext';
 import { LoginModel } from '@auth/auth.model';
-import { ApiResponse, ApiState } from '@root/app.model';
+import { ApiResponse, ApiState } from '@shared/model/shared.model';
 
 @Component({
   selector: 'app-login',

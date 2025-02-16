@@ -16,3 +16,8 @@ export const err = <T>(e: HttpErrorResponse): ApiResponse<T> => ({
   state: ApiState.ERROR,
   message: e.message
 });
+
+export interface ActiveUser {
+  user_id: string;
+  name: string;
+}

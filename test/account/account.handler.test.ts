@@ -49,7 +49,7 @@ describe('account handler', () => {
     await pool.end();
   });
 
-  const tokenBuilder = async (obj: c.JwtObject) =>
+  const jwt = async (obj: c.JwtObject) =>
     await services.jwt.encode(obj, u.twoDaysInSeconds);
 
   describe('retrieve account', () => {
@@ -59,7 +59,7 @@ describe('account handler', () => {
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: acc1.uuid, name: acc1.name })).token}`
         ])
         .expect(200));
 
@@ -69,7 +69,7 @@ describe('account handler', () => {
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: 'account.uuid' })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: 'account.uuid', name: acc1.name })).token}`
         ])
         .expect(404));
   });
@@ -82,7 +82,7 @@ describe('account handler', () => {
         .set('Accept', 'application/json')
         .send({ name: 'Wayne Rooney', dob: '14/12/2025' })
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: acc1.uuid, name: acc1.name })).token}`
         ])
         .expect(204));
 
@@ -93,7 +93,7 @@ describe('account handler', () => {
         .set('Accept', 'application/json')
         .send({ name: 'Frank White', dob: '14/12/2025' })
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: uuid() })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: uuid(), name: acc1.name })).token}`
         ])
         .expect(404));
   });
@@ -104,7 +104,7 @@ describe('account handler', () => {
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
       .set('Cookie', [
-        `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+        `${u.env.COOKIENAME}=${(await jwt({ user_id: acc1.uuid, name: acc1.name })).token}`
       ])
       .expect(200)
       .expect([

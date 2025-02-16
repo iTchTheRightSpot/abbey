@@ -48,6 +48,9 @@ export class AuthService implements c.IAuthService {
       throw new ex.UnauthorizedException('invalid email or password');
     }
 
-    return this.jwtService.encode({ user_id: obj.uuid }, u.twoDaysInSeconds);
+    return this.jwtService.encode(
+      { user_id: obj.uuid, name: obj.name },
+      u.twoDaysInSeconds
+    );
   }
 }

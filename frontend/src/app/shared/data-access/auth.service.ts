@@ -1,15 +1,57 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
-import { catchError, delay, map, merge, Observable, of, startWith } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  delay,
+  map,
+  merge,
+  of,
+  startWith,
+  switchMap,
+  tap
+} from 'rxjs';
 import { LoginModel, RegisterModel } from '@auth/auth.model';
-import { ApiResponse, ApiState, err } from '@root/app.model';
+import {
+  ActiveUser,
+  ApiResponse,
+  ApiState,
+  err
+} from '@shared/model/shared.model';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
+
+  private readonly activeUserCache = new BehaviorSubject<
+    ActiveUser | undefined
+  >(undefined);
+
+  private readonly activeUserRequest = () =>
+    !environment.production
+      ? of<ActiveUser>({ user_id: '1', name: 'test user' })
+      : this.http
+          .get<ActiveUser>(`${environment.domain}auth/active`, {
+            withCredentials: true
+          })
+          .pipe(
+            tap(o => {
+              if (o && Object.keys(o).length > 0) this.activeUserCache.next(o);
+            }),
+            startWith(),
+            catchError(e => of(e))
+          );
+
+  readonly user = toSignal(
+    this.activeUserCache
+      .asObservable()
+      .pipe(switchMap(o => (o ? of<ActiveUser>(o) : this.activeUserRequest()))),
+    { initialValue: undefined }
+  );
 
   readonly login = (obj: LoginModel) =>
     environment.production
@@ -18,7 +60,11 @@ export class AuthService {
             withCredentials: true
           })
           .pipe(
-            map(() => <ApiResponse<any>>{ state: ApiState.LOADED }),
+            switchMap(() =>
+              this.activeUserRequest().pipe(
+                map(() => <ApiResponse<any>>{ state: ApiState.LOADED })
+              )
+            ),
             startWith(<ApiResponse<any>>{ state: ApiState.LOADING }),
             catchError(e => of(err<any>(e)))
           )
@@ -48,8 +94,9 @@ export class AuthService {
       ? this.http
           .post<
             ApiResponse<any>
-          >(`${environment.domain}logout`, {}, { withCredentials: true })
+          >(`${environment.domain}auth/logout`, {}, { withCredentials: true })
           .pipe(
+            tap(() => this.activeUserCache.next(undefined)),
             map(() => <ApiResponse<any>>{ state: ApiState.LOADED }),
             startWith(<ApiResponse<any>>{ state: ApiState.LOADING }),
             catchError(e => of(err<any>(e)))

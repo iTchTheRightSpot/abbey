@@ -6,8 +6,8 @@ import { RegisterComponent } from '@auth/ui/register/register.component';
 import { LoginComponent } from '@auth/ui/login/login.component';
 import { LoginModel, RegisterModel } from '@auth/auth.model';
 import { AuthService } from '@shared/data-access/auth.service';
-import { ApiResponse, ApiState } from '@root/app.model';
-import { CoreRoutes } from '@root/app.routes';
+import { ApiResponse, ApiState } from '@shared/model/shared.model';
+import { RootRoutes } from '@root/app.routes';
 import { Router } from '@angular/router';
 
 @Component({
@@ -34,7 +34,7 @@ export class AuthComponent {
       switchMap(obj => this.service.login(obj)),
       tap(obj => {
         if (obj.state === ApiState.LOADED)
-          this.router.navigate([`/${CoreRoutes.HOME}`]);
+          this.router.navigate([`/${RootRoutes.HOME}`]);
       })
     ),
     { initialValue: <ApiResponse<any>>{ state: ApiState.LOADED } }

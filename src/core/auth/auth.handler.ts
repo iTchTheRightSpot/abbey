@@ -29,7 +29,8 @@ export class AuthHandler {
       m.middleware.validatePayload(this.logger, c.LoginPayload),
       this.login
     );
-    this.router.post('/logout', this.logout);
+    this.router.post('/auth/logout', this.logout);
+    this.router.get('/auth/active', this.active);
   };
 
   private readonly register: RequestHandler = async (
@@ -74,7 +75,10 @@ export class AuthHandler {
   ) => {
     const cookie = req.cookies[u.env.COOKIENAME];
     if (!cookie) {
-      res.status(401).send();
+      res.setHeader('Content-Type', 'application/json').status(401).send({
+        status: 401,
+        message: 'full authentication is required to access this resource'
+      });
       return;
     }
     res
@@ -87,6 +91,25 @@ export class AuthHandler {
       })
       .status(204)
       .send();
+    next();
+  };
+
+  private readonly active: RequestHandler = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    if (!req.jwtClaim) {
+      res.setHeader('Content-Type', 'application/json').status(401).send({
+        status: 401,
+        message: 'full authentication is required to access this resource'
+      });
+      return;
+    }
+    res
+      .setHeader('Content-Type', 'application/json')
+      .status(200)
+      .send({ user_id: req.jwtClaim.obj.user_id, name: req.jwtClaim.obj.name });
     next();
   };
 }

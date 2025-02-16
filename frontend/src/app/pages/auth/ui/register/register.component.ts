@@ -17,7 +17,7 @@ import { Message } from 'primeng/message';
 import { FloatLabel } from 'primeng/floatlabel';
 import { Button } from 'primeng/button';
 import { Password } from 'primeng/password';
-import { ApiResponse, ApiState } from '@root/app.model';
+import { ApiResponse, ApiState } from '@shared/model/shared.model';
 import { InputText } from 'primeng/inputtext';
 import { RegisterModel } from '@auth/auth.model';
 import { DatePicker } from 'primeng/datepicker';

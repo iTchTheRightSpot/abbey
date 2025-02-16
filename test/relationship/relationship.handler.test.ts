@@ -56,7 +56,7 @@ describe('relationship handler', () => {
     await pool.end();
   });
 
-  const tokenBuilder = async (obj: c.JwtObject) =>
+  const jwt = async (obj: c.JwtObject) =>
     await services.jwt.encode(obj, u.twoDaysInSeconds);
 
   describe('follow & friend request', () => {
@@ -67,7 +67,7 @@ describe('relationship handler', () => {
         .set('Accept', 'application/json')
         .send({ user_id: acc2.uuid })
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: acc1.uuid, name: acc1.name })).token}`
         ])
         .expect(201));
 
@@ -78,7 +78,7 @@ describe('relationship handler', () => {
         .set('Accept', 'application/json')
         .send({ user_id: acc1.uuid })
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: acc1.uuid, name: acc1.name })).token}`
         ])
         .expect(400)
         .expect({ message: 'cannot follow yourself', status: 400 }));
@@ -90,7 +90,7 @@ describe('relationship handler', () => {
         .set('Accept', 'application/json')
         .send({ user_id: 'uuid' })
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: acc1.uuid, name: acc1.name })).token}`
         ])
         .expect(404));
 
@@ -101,7 +101,7 @@ describe('relationship handler', () => {
         .set('Accept', 'application/json')
         .send({ user_id: acc2.uuid })
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: acc1.uuid, name: acc1.name })).token}`
         ])
         .expect(400)
         .expect({ message: 'already following account', status: 400 }));
@@ -113,7 +113,7 @@ describe('relationship handler', () => {
         .set('Accept', 'application/json')
         .send({ user_id: acc1.uuid })
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc2.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: acc2.uuid, name: acc1.name })).token}`
         ])
         .expect(201));
 
@@ -144,7 +144,7 @@ describe('relationship handler', () => {
         .set('Accept', 'application/json')
         .send({ user_id: acc2.uuid })
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: acc1.uuid, name: acc1.name })).token}`
         ])
         .expect(204));
 
@@ -155,7 +155,7 @@ describe('relationship handler', () => {
         .set('Accept', 'application/json')
         .send({ user_id: acc1.uuid })
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: acc1.uuid, name: acc1.name })).token}`
         ])
         .expect(400)
         .expect({ message: 'cannot unfollow yourself', status: 400 }));
@@ -167,7 +167,7 @@ describe('relationship handler', () => {
         .set('Accept', 'application/json')
         .send({ user_id: 'uuid' })
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: acc1.uuid, name: acc1.name })).token}`
         ])
         .expect(404));
 
@@ -178,7 +178,7 @@ describe('relationship handler', () => {
         .set('Accept', 'application/json')
         .send({ user_id: acc2.uuid })
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: acc1.uuid, name: acc1.name })).token}`
         ])
         .expect(400)
         .expect({ message: 'you are not following account', status: 400 }));
@@ -190,7 +190,7 @@ describe('relationship handler', () => {
         .set('Accept', 'application/json')
         .send({ user_id: acc1.uuid })
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc2.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: acc2.uuid, name: acc1.name })).token}`
         ])
         .expect(204));
 
@@ -219,7 +219,7 @@ describe('relationship handler', () => {
         .set('Accept', 'application/json')
         .send({ user_id: acc2.uuid })
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: acc1.uuid, name: acc1.name })).token}`
         ])
         .expect(400)
         .expect({
@@ -236,7 +236,7 @@ describe('relationship handler', () => {
         .set('Accept', 'application/json')
         .send({ user_id: acc2.uuid })
         .set('Cookie', [
-          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+          `${u.env.COOKIENAME}=${(await jwt({ user_id: acc1.uuid, name: acc1.name })).token}`
         ])
         .expect(400)
         .expect({

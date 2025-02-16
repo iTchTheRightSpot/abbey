@@ -2,6 +2,7 @@ import request from 'supertest';
 import { Application } from 'express';
 import { Pool } from 'pg';
 import { createApp } from '@abbey/app';
+import * as c from '@core/index';
 import * as u from '@utils/index';
 import * as e from '@entry/index';
 import { poolInstance, truncate } from '@mock/pool';
@@ -60,7 +61,7 @@ describe('flow to register, login, and logout', () => {
 
     it('logout', async () =>
       await request(app)
-        .post(`${u.env.ROUTE_PREFIX}logout`)
+        .post(`${u.env.ROUTE_PREFIX}auth/logout`)
         .set('Cookie', [cookie])
         .expect(204));
   });
@@ -87,4 +88,17 @@ describe('flow to register, login, and logout', () => {
         .set('Accept', 'application/json')
         .expect(401));
   });
+
+  const jwt = async (obj: c.JwtObject) =>
+    await services.jwt.encode(obj, u.twoDaysInSeconds);
+
+  it('should return active user', async () =>
+    await request(app)
+      .get(`${u.env.ROUTE_PREFIX}auth/active`)
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .set('Cookie', [
+        `${u.env.COOKIENAME}=${(await jwt({ user_id: uuid(), name: 'frank' })).token}`
+      ])
+      .expect(200));
 });

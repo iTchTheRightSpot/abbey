@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Menubar } from 'primeng/menubar';
 import { ModeComponent } from '@shared/ui/mode.component';
-import { CoreRoutes } from '@root/app.routes';
+import { RootRoutes } from '@root/app.routes';
 
 @Component({
   selector: 'app-navigation',
@@ -23,12 +23,12 @@ export class NavigationComponent {
     {
       label: 'Home',
       icon: 'pi pi-home',
-      routerLink: `/${CoreRoutes.HOME}`
+      routerLink: `/${RootRoutes.HOME}`
     },
     {
       label: 'Auth',
       icon: 'pi pi-user',
-      routerLink: `/${CoreRoutes.AUTH}`
+      routerLink: `/${RootRoutes.AUTH}`
     }
   ];
 }

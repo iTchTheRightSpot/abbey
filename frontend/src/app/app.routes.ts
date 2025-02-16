@@ -1,20 +1,21 @@
 import { Routes } from '@angular/router';
 
-export const CoreRoutes = {
+export const RootRoutes = {
   HOME: '',
   AUTH: 'auth'
 };
 
 export const routes: Routes = [
   {
-    path: CoreRoutes.HOME,
+    path: RootRoutes.HOME,
     loadComponent: () =>
-      import('@home/home.component').then(m => m.HomeComponent)
+      import('@home/home.component').then(m => m.HomeComponent),
+    loadChildren: () => import('@home/home.routes').then(m => m.routes)
   },
   {
-    path: CoreRoutes.AUTH,
+    path: RootRoutes.AUTH,
     loadComponent: () =>
       import('@auth/auth.component').then(m => m.AuthComponent)
   },
-  { path: '**', redirectTo: `/${CoreRoutes.HOME}` }
+  { path: '**', redirectTo: `/${RootRoutes.HOME}` }
 ];

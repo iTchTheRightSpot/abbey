@@ -9,6 +9,7 @@ import {
 
 export interface JwtObject {
   user_id: string;
+  name: string;
 }
 
 export interface JwtClaimsObject {
