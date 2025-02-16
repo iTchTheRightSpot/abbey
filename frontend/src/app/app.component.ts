@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavigationComponent } from '@shared/ui/navigation.component';
 import { AuthService } from '@shared/data-access/auth.service';
@@ -21,10 +21,9 @@ import { ApiState } from '@shared/model/shared.model';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
-  constructor() {
+  protected readonly state = ApiState;
+  constructor(protected readonly service: AuthService) {
     // automatically retrieve active user on load of application
     this.service.user();
   }
-  protected readonly service = inject(AuthService);
-  protected readonly state = ApiState;
 }

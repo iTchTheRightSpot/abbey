@@ -8,14 +8,12 @@ export enum TransactionIsolationLevel {
 
 export interface ITransactionProvider {
   /**
-   * Executes the provided function within a database transaction.
-   * If the function completes successfully, the transaction is committed;
-   * if an error occurs, the transaction is rolled back.
+   * Executes operations within a database transaction. Commits on
+   * success, rolls back on failure.
    *
-   * @param txFunc - A function that receives an instance of Adapters
-   * and contains the operations to be executed in the transaction.
-   * @param isolation
-   * @returns A promise that resolves when the transaction is complete.
+   * @param txFunc - Callback function with the transactional logic.
+   * @param isolation - Optional isolation level (default: READ_COMMITTED).
+   * @returns A promise that resolves when the transaction completes.
    */
   runInTransaction<T>(
     txFunc: (adapters: e.Adapters) => Promise<T>,
@@ -23,6 +21,10 @@ export interface ITransactionProvider {
   ): Promise<T>;
 }
 
+/**
+ * Provides transactional capabilities for database operations.
+ * Manages connection, isolation level, and commits/rollbacks.
+ */
 export class TransactionProvider implements ITransactionProvider {
   constructor(
     private readonly logger: u.ILogger,
