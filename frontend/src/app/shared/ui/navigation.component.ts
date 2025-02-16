@@ -1,20 +1,17 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { CoreRoutes } from '../app.routes';
-import { ModeComponent } from './mode.component';
 import { Menubar } from 'primeng/menubar';
+import { ModeComponent } from '@shared/ui/mode.component';
+import { CoreRoutes } from '@root/app.routes';
 
 @Component({
   selector: 'app-navigation',
-  imports: [
-    ModeComponent,
-    Menubar
-  ],
+  imports: [ModeComponent, Menubar],
   template: `
     <div class="w-full">
       <p-menubar [model]="items">
         <ng-template #end>
-            <app-mode />
+          <app-mode />
         </ng-template>
       </p-menubar>
     </div>

@@ -4,6 +4,15 @@
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
+    "baseUrl": "./",
+    "paths": {
+      "@root/*": ["src/app/*"],
+      "@env/*": ["src/environments/*"],
+      "@pages/*": ["src/app/pages/*"],
+      "@home/*": ["src/app/pages/home/*"],
+      "@auth/*": ["src/app/pages/auth/*"],
+      "@shared/*": ["src/app/shared/*"]
+    },
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,

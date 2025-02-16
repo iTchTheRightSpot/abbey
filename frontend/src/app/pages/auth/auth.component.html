@@ -27,3 +27,25 @@
     />
   </g>
 </svg>
+
+<div class="min-h-screen w-full m-auto xl:pt-9 flex justify-center">
+  <div class="w-full">
+    <p-tabs value="0">
+      <p-tablist>
+        <p-tab value="0">Login</p-tab>
+        <p-tab value="1" #register>Register</p-tab>
+      </p-tablist>
+      <p-tabpanels>
+        <p-tabpanel value="0">
+          <app-login [login]="login()" (emit)="loginSubject.next($event)" />
+        </p-tabpanel>
+
+        <p-tabpanel value="1">
+          @defer (on interaction(register)) {
+            <app-register />
+          }
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+</div>

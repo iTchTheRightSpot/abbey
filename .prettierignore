@@ -3,3 +3,5 @@ build
 coverage
 logs/
 keys/
+frontend/.angular
+frontend/dist

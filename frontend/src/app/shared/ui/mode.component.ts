@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  signal
+} from '@angular/core';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { FormsModule } from '@angular/forms';
 
@@ -43,5 +48,5 @@ export class ModeComponent implements OnInit {
     if (this.isDarkMode()) localStorage.setItem('color-theme', 'light');
     else localStorage.setItem('color-theme', 'dark');
     this.isDarkMode.set(!this.isDarkMode());
-  }
+  };
 }

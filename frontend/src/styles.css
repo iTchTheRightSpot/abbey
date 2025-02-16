@@ -1,2 +1,10 @@
-@import "primeicons/primeicons.css";
-@import "tailwindcss";
+/*@import 'primeicons/primeicons.css';*/
+/*@import 'tailwindcss';*/
+
+@use 'primeicons/primeicons.css';
+@plugin 'tailwindcss-primeui';
+@layer tailwind, primeng;
+
+@layer tailwind {
+  @import 'tailwindcss';
+}

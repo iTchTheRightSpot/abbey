@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavigationComponent } from './shared/navigation.component';
+import { NavigationComponent } from '@shared/ui/navigation.component';
 
 @Component({
   selector: 'app-root',

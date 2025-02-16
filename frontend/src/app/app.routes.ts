@@ -9,12 +9,12 @@ export const routes: Routes = [
   {
     path: CoreRoutes.HOME,
     loadComponent: () =>
-      import('./pages/home/home.component').then((m) => m.HomeComponent)
+      import('./pages/home/home.component').then(m => m.HomeComponent)
   },
   {
     path: CoreRoutes.AUTH,
     loadComponent: () =>
-      import('./pages/auth/auth.component').then((m) => m.AuthComponent)
+      import('./pages/auth/auth.component').then(m => m.AuthComponent)
   },
   { path: '**', redirectTo: `/${CoreRoutes.HOME}` }
 ];
