@@ -1,0 +1,147 @@
+<div class="py-10 flex justify-center">
+  <div
+    class="max-w-2xl h-fit px-10 md:px-20 py-7 flex flex-col item-center justify-center rounded-md shadow-2xl border"
+  >
+    <div class="text-left mb-4">
+      <p class="mb-2 text-xl md:text-2xl font-bold">Register</p>
+      <span class="font-medium opacity-50">Please enter your details</span>
+    </div>
+
+    <form
+      [formGroup]="form"
+      class="w-full flex flex-col gap-4 text-center md:text-left"
+    >
+      <div class="w-full flex flex-col gap-4">
+        <div class="">
+          <p-iconfield styleClass="mb-0">
+            <p-inputicon styleClass="pi pi-envelope" />
+            <input
+              class="w-full"
+              type="text"
+              formControlName="email"
+              pInputText
+              placeholder="Email"
+            />
+          </p-iconfield>
+          @if (
+            form.controls['email'].invalid && !form.controls['email'].untouched
+          ) {
+            <p-message severity="error" variant="simple" size="small">
+              Email is required
+            </p-message>
+          }
+        </div>
+
+        <div
+          class="w-full flex flex-col md:flex-row items-center justify-center gap-2"
+        >
+          <div class="w-full">
+            <p-iconfield styleClass="mb-0">
+              <p-inputicon styleClass="pi pi-user" />
+              <input
+                type="text"
+                class="w-full"
+                formControlName="name"
+                pInputText
+                placeholder="name"
+              />
+            </p-iconfield>
+            @if (
+              form.controls['name'].invalid && !form.controls['name'].untouched
+            ) {
+              <p-message severity="error" variant="simple" size="small">
+                Name is required
+              </p-message>
+            }
+          </div>
+
+          <div class="w-full">
+            <p-date-picker
+              formControlName="dob"
+              [showIcon]="true"
+              inputId="buttondisplay"
+              [showOnFocus]="false"
+            />
+            @if (
+              form.controls['dob'].invalid && !form.controls['dob'].untouched
+            ) {
+              <p-message severity="error" variant="simple" size="small">
+                Date of Birth is required
+              </p-message>
+            }
+          </div>
+        </div>
+
+        <div class="w-full grid gap-2 grid-cols-1 md:grid-cols-2">
+          <div class="w-full">
+            <p-floatlabel variant="on">
+              <p-password
+                formControlName="password"
+                [toggleMask]="true"
+                id="on_label"
+                inputId="on_label"
+              />
+              <label for="on_label">Password</label>
+            </p-floatlabel>
+            @if (
+              form.controls['password'].invalid &&
+              !form.controls['password'].untouched
+            ) {
+              <p-message severity="error" variant="simple" size="small">
+                Password is required
+              </p-message>
+            } @else if (!form.controls['password'].untouched && !match()) {
+              <p-message severity="error" variant="simple" size="small">
+                Passwords do not match
+              </p-message>
+            }
+          </div>
+
+          <div class="w-full">
+            <p-floatlabel variant="on">
+              <p-password
+                formControlName="confirm_password"
+                [toggleMask]="true"
+                id="c_on_label"
+                inputId="c_on_label"
+              />
+              <label for="c_on_label">Confirm password</label>
+            </p-floatlabel>
+            @if (
+              form.controls['confirm_password'].invalid &&
+              !form.controls['confirm_password'].untouched
+            ) {
+              <p-message severity="error" variant="simple" size="small">
+                Password is required
+              </p-message>
+            } @else if (
+              !form.controls['confirm_password'].untouched && !match()
+            ) {
+              <p-message severity="error" variant="simple" size="small">
+                Passwords do not match
+              </p-message>
+            }
+          </div>
+        </div>
+      </div>
+
+      <p-button
+        [className]="'text-right'"
+        (onClick)="submit()"
+        [disabled]="form.invalid || !match()"
+      >
+        @if (register().state === state.LOADING) {
+          <i class="pi pi-spin pi-spinner" style="font-size: 1rem"></i>
+        } @else {
+          Register
+        }
+      </p-button>
+    </form>
+
+    @if (register().state === state.ERROR) {
+      <p-message severity="error" variant="simple">
+        {{ register().message }}
+      </p-message>
+    }
+  </div>
+</div>

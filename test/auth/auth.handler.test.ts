@@ -60,7 +60,7 @@ describe('flow to register, login, and logout', () => {
 
     it('logout', async () =>
       await request(app)
-        .post(`${u.env.ROUTE_PREFIX}auth/logout`)
+        .post(`${u.env.ROUTE_PREFIX}logout`)
         .set('Cookie', [cookie])
         .expect(204));
   });

@@ -7,7 +7,7 @@ import { NavigationComponent } from '@shared/ui/navigation.component';
   imports: [RouterOutlet, NavigationComponent],
   template: `
     <div class="w-full xl:max-w-7xl m-auto">
-      <div class="w-full sticky top-0 z-20">
+      <div class="w-full mb-3 sticky top-0 z-20">
         <app-navigation />
       </div>
 

@@ -1,0 +1,75 @@
+<div class="flex justify-center">
+  <div
+    class="max-w-2xl h-fit px-10 md:px-20 py-7 flex flex-col item-center justify-center rounded-md shadow-2xl border"
+  >
+    <div class="text-center md:text-left mb-4">
+      <p class="mb-2 text-xl md:text-2xl font-bold">Log in</p>
+      <span class="font-medium">Please enter your details</span>
+    </div>
+
+    <form
+      [formGroup]="form"
+      class="flex flex-col gap-4 text-center md:text-left"
+    >
+      <div
+        class="w-full flex flex-col md:flex-row items-center justify-center gap-4"
+      >
+        <div>
+          <p-iconfield styleClass="mb-0">
+            <p-inputicon styleClass="pi pi-envelope" />
+            <input
+              type="text"
+              formControlName="email"
+              pInputText
+              placeholder="Email"
+            />
+          </p-iconfield>
+          @if (
+            form.controls['email'].invalid && !form.controls['email'].untouched
+          ) {
+            <p-message severity="error" variant="simple" size="small">
+              Email is required
+            </p-message>
+          }
+        </div>
+
+        <div>
+          <p-floatlabel variant="on">
+            <p-password
+              formControlName="password"
+              [toggleMask]="true"
+              id="on_label"
+              inputId="on_label"
+            />
+            <label for="on_label">Password</label>
+          </p-floatlabel>
+          @if (
+            form.controls['password'].invalid &&
+            !form.controls['password'].untouched
+          ) {
+            <p-message severity="error" variant="simple" size="small">
+              Password is required
+            </p-message>
+          }
+        </div>
+      </div>
+
+      <p-button
+        [disabled]="form.invalid || login().state === state.LOADING"
+        (onClick)="submit()"
+      >
+        @if (login().state === state.LOADING) {
+          <i class="pi pi-spin pi-spinner" style="font-size: 1rem"></i>
+        } @else {
+          Login
+        }
+      </p-button>
+    </form>
+
+    @if (login().state === state.ERROR) {
+      <p-message severity="error" variant="simple">
+        {{ login().message }}
+      </p-message>
+    }
+  </div>
+</div>

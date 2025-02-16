@@ -29,7 +29,7 @@ export class AuthHandler {
       m.middleware.validatePayload(this.logger, c.LoginPayload),
       this.login
     );
-    this.router.post('/auth/logout', this.logout);
+    this.router.post('/logout', this.logout);
   };
 
   private readonly register: RequestHandler = async (
