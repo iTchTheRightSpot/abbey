@@ -29,6 +29,47 @@ export class RelationshipHandler {
       m.middleware.validatePayload(this.logger, c.FollowPayload),
       this.unfollow
     );
+    this.router.get('/relationship', this.following);
+  };
+
+  private readonly following: RequestHandler = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    if (!req.jwtClaim) {
+      res.setHeader('Content-Type', 'application/json').status(401).send({
+        message: 'full authentication is required to access this resource',
+        status: 401
+      });
+      return;
+    }
+
+    const { status } = req.params;
+
+    if (
+      ![
+        c.RelationshipStatusParam.FOLLOWERS,
+        c.RelationshipStatusParam.FOLLOWING,
+        c.RelationshipStatusParam.FRIENDS
+      ].some((en) => en === status)
+    ) {
+      res.setHeader('Content-Type', 'application/json').status(400).send({
+        status: 400,
+        message: 'bad request invalid request parameter'
+      });
+      return;
+    }
+
+    try {
+      const arr = await this.service.following(
+        req.jwtClaim.obj,
+        status as c.RelationshipStatusParam
+      );
+      res.setHeader('Content-Type', 'application/json').status(200).send(arr);
+    } catch (e) {
+      next(e);
+    }
   };
 
   private readonly follow: RequestHandler = async (
@@ -37,7 +78,7 @@ export class RelationshipHandler {
     next: NextFunction
   ) => {
     if (!req.jwtClaim) {
-      res.status(401).send({
+      res.setHeader('Content-Type', 'application/json').status(401).send({
         message: 'full authentication is required to access this resource',
         status: 401
       });
@@ -58,7 +99,7 @@ export class RelationshipHandler {
     next: NextFunction
   ) => {
     if (!req.jwtClaim) {
-      res.status(401).send({
+      res.setHeader('Content-Type', 'application/json').status(401).send({
         message: 'full authentication is required to access this resource',
         status: 401
       });

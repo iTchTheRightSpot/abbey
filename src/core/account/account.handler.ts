@@ -42,7 +42,7 @@ export class AccountHandler {
     }
     try {
       const p = await this.service.account(req.jwtClaim!.obj);
-      res.status(200).send(p);
+      res.setHeader('Content-Type', 'application/json').status(200).send(p);
     } catch (e) {
       next(e);
     }
@@ -62,7 +62,7 @@ export class AccountHandler {
     }
     try {
       const p = await this.service.accounts(req.jwtClaim!.obj);
-      res.status(200).send(p);
+      res.setHeader('Content-Type', 'application/json').status(200).send(p);
     } catch (e) {
       next(e);
     }

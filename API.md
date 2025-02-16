@@ -204,3 +204,43 @@ Response:
 - 404 Not Found: Account not found for associated JWT or user_id.
 - 400 Bad request: If user is attempting to unfollow his/herself or someone they already do not follow.
 - 409 Conflict: If an error occurs unfollowing account associated to request body user_id.
+
+### GET RELATIONSHIPS
+
+Retrieves accounts that have a relationships account with user. Requires the user to have a valid JWT & request parameter:
+
+**Endpoint:** /api/v1/accounts?status=
+**status:**
+
+- FRIENDS
+- FOLLOWING
+- FOLLOWERS
+
+Headers:
+
+- Authorization: The request should include the JWT token in the cookie. For example:
+  `Cookie: JSESSIONID=<jwt-value>`
+
+Response:
+
+- 200 OK: Successfully fetches all accounts.
+- 401 Unauthorized: Missing or invalid JWT.
+- 400 Bad Request: Invalid or missing request parameter.
+- 500 Internal Server Error: Error parsing JWT in the request.
+
+```json
+[
+  {
+    "name": "John Doe",
+    "dob": "01/01/2000",
+    "email": "john@email.com",
+    "user_id": "6f9f4360-bf97-4c69-947b-2a62a03a700d"
+  },
+  {
+    "name": "Frank White",
+    "dob": "01/01/1974",
+    "email": "frank@email.com",
+    "user_id": "3eb61359-7112-4ed8-9296-227ce62a05bc"
+  }
+]
+```

@@ -210,4 +210,38 @@ describe('relationship handler', () => {
       expect(u2).toBeUndefined();
     });
   });
+
+  describe('return friends, followings, or followers', () => {
+    it('bad request invalid parameter', async () =>
+      await request(app)
+        .get(`${u.env.ROUTE_PREFIX}relationship?status=nothing`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .send({ user_id: acc2.uuid })
+        .set('Cookie', [
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+        ])
+        .expect(400)
+        .expect({
+          status: 400,
+          message: 'bad request invalid request parameter'
+        }));
+
+    it('bad request invalid parameter', async () =>
+      await request(app)
+        .get(
+          `${u.env.ROUTE_PREFIX}relationship?status=${c.RelationshipStatusParam.FRIENDS}`
+        )
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .send({ user_id: acc2.uuid })
+        .set('Cookie', [
+          `${u.env.COOKIENAME}=${(await tokenBuilder({ user_id: acc1.uuid })).token}`
+        ])
+        .expect(400)
+        .expect({
+          status: 400,
+          message: 'bad request invalid request parameter'
+        }));
+  });
 });

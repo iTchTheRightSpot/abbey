@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import { expressjwt } from 'express-jwt';
 import * as u from '@utils/index';
 import * as e from '@entry/index';
-import * as m from '@middlewares//index';
+import * as m from '@middlewares/index';
 
 export const createApp = (logger: u.ILogger, services: e.ServicesRegistry) => {
   const app: Application = express();

@@ -50,17 +50,117 @@ describe('relationship store', () => {
 
   describe('save relationship', () => {
     it('success', async () =>
-      await relStore.save(<c.RelationshipEntity>{
-        status: c.RelationshipStatus.FRIEND,
-        relation_id: acc1.account_id,
-        following_id: acc2.account_id
-      }));
+      expect(
+        (
+          await relStore.save(<c.RelationshipEntity>{
+            status: c.RelationshipStatus.FRIEND,
+            account_id: acc1.account_id,
+            following_id: acc2.account_id
+          })
+        ).relation_id
+      ).toBeGreaterThan(0));
 
     it('fail. user attempting to follow themselves', async () =>
-      await relStore.save(<c.RelationshipEntity>{
-        status: c.RelationshipStatus.FRIEND,
-        relation_id: acc1.account_id,
-        following_id: acc1.account_id
-      }));
+      await expect(
+        relStore.save(<c.RelationshipEntity>{
+          status: c.RelationshipStatus.FRIEND,
+          account_id: acc1.account_id,
+          following_id: acc1.account_id
+        })
+      ).rejects.toThrowError(
+        new RegExp(
+          '[error: new row for relation "relationship" violates check constraint "account_id_notequal_following_id"]'
+        )
+      ));
+  });
+
+  describe('friends, following, and followers', () => {
+    const rnd = (min: number, max: number) =>
+      Math.floor(Math.random() * (max - min + 1) + min);
+
+    const followers = async (userId: number, noOfFollowers: number) => {
+      const arr: c.AccountEntity[] = [];
+      for (let i = 0; i < noOfFollowers; i++) {
+        const uu = uuid();
+        const d = await accStore.save({
+          name: uu,
+          dob: new Date().toISOString(),
+          email: uu,
+          uuid: uu,
+          password: 'password'
+        } as c.AccountEntity);
+
+        await relStore.save(<c.RelationshipEntity>{
+          status: c.RelationshipStatus.NOT_FRIEND,
+          account_id: d.account_id,
+          following_id: userId
+        });
+        arr[i] = d;
+      }
+      return arr;
+    };
+
+    it('followers. should return all accounts that follow acc1', async () => {
+      // given
+      const f = await followers(acc1.account_id, rnd(3, 10));
+
+      // method to test
+      const m = await relStore.followers(acc1.uuid);
+
+      // assert
+      expect(m.length).toEqual(f.length);
+      expect(m).toEqual(f);
+    });
+
+    const followEachOther = async (userId: number, noFollowing: number) => {
+      const arr: c.AccountEntity[] = [];
+      for (let i = 0; i < noFollowing; i++) {
+        const uu = uuid();
+        const d = await accStore.save({
+          name: uu,
+          dob: new Date().toISOString(),
+          email: uu,
+          uuid: uu,
+          password: 'password'
+        } as c.AccountEntity);
+
+        await relStore.save(<c.RelationshipEntity>{
+          status: c.RelationshipStatus.FRIEND,
+          account_id: userId,
+          following_id: d.account_id
+        });
+        await relStore.save(<c.RelationshipEntity>{
+          status: c.RelationshipStatus.FRIEND,
+          account_id: d.account_id,
+          following_id: userId
+        });
+        arr[i] = d;
+      }
+      return arr;
+    };
+
+    it('following. should return all accounts that acc1 follows', async () => {
+      // given
+      const f = await followEachOther(acc1.account_id, rnd(4, 7));
+
+      // method to test
+      const m = await relStore.followings(acc1.uuid);
+
+      // assert
+      expect(m.length).toEqual(f.length);
+      expect(m).toEqual(f);
+    });
+
+    it('friends. should return all friends of acc1', async () => {
+      // given
+      const f = await followEachOther(acc1.account_id, rnd(3, 7));
+
+      // method to test
+      const m = await relStore.friends(acc1.uuid);
+
+      // assert
+      expect(m.length).toEqual(f.length);
+      expect(m).toEqual(f);
+    });
   });
 });

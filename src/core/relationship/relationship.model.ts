@@ -5,6 +5,12 @@ export enum RelationshipStatus {
   NOT_FRIEND = 'NOT_FRIEND'
 }
 
+export enum RelationshipStatusParam {
+  FRIENDS = 'FRIENDS',
+  FOLLOWING = 'FOLLOWING',
+  FOLLOWERS = 'FOLLOWERS'
+}
+
 export interface RelationshipEntity {
   relation_id: number;
   status: RelationshipStatus;

@@ -39,6 +39,7 @@ sticking to firm and consistent aesthetic choices.
    - Users can **follow** and **unfollow** each other.
    - If **both users follow each other**, they automatically become **friends**.
    - If **user1 unfollows user2**, **user2 is no longer considered a friend** of user1.
+   - A user can retrieve a list of all their friends, people they are following, or their followers.
 
 ## Pre-requisite
 

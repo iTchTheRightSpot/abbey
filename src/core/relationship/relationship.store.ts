@@ -15,6 +15,9 @@ export interface IRelationshipStore {
     status: c.RelationshipStatus
   ): Promise<void>;
   delete(accountId: number, followingId: number): Promise<number>;
+  followers(userUUID: string): Promise<c.AccountEntity[]>;
+  followings(userUUID: string): Promise<c.AccountEntity[]>;
+  friends(userUUID: string): Promise<c.AccountEntity[]>;
 }
 
 export class RelationShipStore implements IRelationshipStore {
@@ -121,6 +124,82 @@ export class RelationShipStore implements IRelationshipStore {
         resolve(Number(db.rows[0].count));
       } catch (e) {
         this.logger.error('error deleting relationship', e);
+        reject(e);
+      }
+    });
+  }
+
+  followers(userUUID: string): Promise<c.AccountEntity[]> {
+    const q = `
+        WITH followers(id) AS (
+            SELECT r.account_id FROM relationship r
+            INNER JOIN account a ON a.account_id = r.following_id
+            WHERE a.uuid = $1
+        )
+        SELECT a.* FROM followers f
+        INNER JOIN account a ON a.account_id = f.id
+    `;
+    return new Promise<c.AccountEntity[]>(async (resolve, reject) => {
+      try {
+        const db = await this.db.exec(q.trim(), userUUID.trim());
+        if (db.rows.length === 0) return resolve([]);
+        const rows = db.rows as c.AccountEntity[];
+        rows.forEach((a) => (a.account_id = Number(a.account_id)));
+        resolve(rows);
+      } catch (e) {
+        this.logger.error('error retrieving followers', e);
+        reject(e);
+      }
+    });
+  }
+
+  followings(userUUID: string): Promise<any> {
+    const q = `
+    WITH followering(id) AS (
+        SELECT r.following_id FROM relationship r
+        INNER JOIN account a ON a.account_id = r.account_id
+        WHERE a.uuid = $1
+    )
+    SELECT a.* FROM followering f
+    INNER JOIN account a ON a.account_id = f.id
+    `;
+    return new Promise<c.AccountEntity[]>(async (resolve, reject) => {
+      try {
+        const db = await this.db.exec(q.trim(), userUUID.trim());
+        if (db.rows.length === 0) return resolve([]);
+        const rows = db.rows as c.AccountEntity[];
+        rows.forEach((a) => (a.account_id = Number(a.account_id)));
+        resolve(rows);
+      } catch (e) {
+        this.logger.error('error retrieving followings', e);
+        reject(e);
+      }
+    });
+  }
+
+  friends(userUUID: string): Promise<any> {
+    const q = `
+    WITH followering(id) AS (
+        SELECT r.following_id FROM relationship r
+        INNER JOIN account a ON a.account_id = r.account_id
+        WHERE a.uuid = $1 AND r.status = $2
+    )
+    SELECT a.* FROM followering f
+    INNER JOIN account a ON a.account_id = f.id
+    `;
+    return new Promise<c.AccountEntity[]>(async (resolve, reject) => {
+      try {
+        const db = await this.db.exec(
+          q.trim(),
+          userUUID.trim(),
+          c.RelationshipStatus.FRIEND
+        );
+        if (db.rows.length === 0) return resolve([]);
+        const rows = db.rows as c.AccountEntity[];
+        rows.forEach((a) => (a.account_id = Number(a.account_id)));
+        resolve(rows);
+      } catch (e) {
+        this.logger.error('error retrieving friends', e);
         reject(e);
       }
     });

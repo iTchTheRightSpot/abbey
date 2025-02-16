@@ -4,6 +4,10 @@ import * as e from '@entry/index';
 import * as ex from '@exceptions/index';
 
 export interface IRelationshipService {
+  following(
+    j: c.JwtObject,
+    p: c.RelationshipStatusParam
+  ): Promise<c.AccountResponse[]>;
   follow(j: c.JwtObject, payload: c.FollowPayload): Promise<void>;
   unfollow(j: c.JwtObject, payload: c.FollowPayload): Promise<void>;
 }
@@ -13,6 +17,49 @@ export class RelationshipService implements IRelationshipService {
     private readonly logger: u.ILogger,
     private readonly adps: e.Adapters
   ) {}
+
+  async following(
+    j: c.JwtObject,
+    p: c.RelationshipStatusParam
+  ): Promise<c.AccountResponse[]> {
+    try {
+      switch (p) {
+        case c.RelationshipStatusParam.FOLLOWERS:
+          return (await this.adps.relationship.followers(j.user_id)).map(
+            (a) =>
+              <c.AccountResponse>{
+                name: a.name,
+                dob: a.dob,
+                email: a.email,
+                user_id: a.uuid
+              }
+          );
+        case c.RelationshipStatusParam.FOLLOWING:
+          return (await this.adps.relationship.followings(j.user_id)).map(
+            (a) =>
+              <c.AccountResponse>{
+                name: a.name,
+                dob: a.dob,
+                email: a.email,
+                user_id: a.uuid
+              }
+          );
+        case c.RelationshipStatusParam.FRIENDS:
+          return (await this.adps.relationship.friends(j.user_id)).map(
+            (a) =>
+              <c.AccountResponse>{
+                name: a.name,
+                dob: a.dob,
+                email: a.email,
+                user_id: a.uuid
+              }
+          );
+      }
+    } catch (e) {
+      this.logger.error(e);
+      throw new ex.ServerException();
+    }
+  }
 
   async follow(j: c.JwtObject, o: c.FollowPayload): Promise<void> {
     if (j.user_id.trim() === o.user_id.trim())
