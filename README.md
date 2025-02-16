@@ -23,9 +23,23 @@ sticking to firm and consistent aesthetic choices.
 1. Production ready code publicly hosted on GitHub.
 2. A video demoing the application - frontend (browser) / backend (postman) / mobile (emulator).
 
-## Assumptions
+## Implemented Functionalities
 
-Waiting for feedback
+1. **Authentication**:
+
+   - **Registration**, **Login**, **Logout**.
+     - JWT authorization using Auth0 middleware for secure authentication.
+
+2. **User Account Management**:
+
+   - Users can **update** and **retrieve** their account details.
+   - Users can **retrieve** a list of other registered users.
+
+3. **Social Interaction**:
+   - Users can **follow** and **unfollow** each other.
+   - If **both users follow each other**, they automatically become **friends**.
+   - If **user1 unfollows user2**, **user2 is no longer considered a friend** of user1.
+   - A user can retrieve a list of all their friends, people they are following, or their followers.
 
 ## Pre-requisite
 

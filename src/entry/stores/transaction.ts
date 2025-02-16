@@ -48,8 +48,8 @@ export class TransactionProvider implements ITransactionProvider {
     } catch (err) {
       if (oc) {
         await oc.query('ROLLBACK');
-        this.logger.error(`TRANSACTION ROLLED BACK. ${err}`);
-      } else this.logger.error(`TRANSACTION NEVER STARTED ${err}`);
+        this.logger.error(`TRANSACTION ROLLED BACK.`, err);
+      } else this.logger.error(`TRANSACTION NEVER STARTED`, err);
       throw err;
     } finally {
       if (oc) {

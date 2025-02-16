@@ -11,4 +11,4 @@ export const poolInstance = (logger: u.ILogger) => {
 };
 
 export const truncate = async (p: Pool) =>
-  await p.query('TRUNCATE profile CASCADE');
+  await p.query('TRUNCATE relationship, account CASCADE');

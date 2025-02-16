@@ -16,13 +16,13 @@ export class AuthService implements c.IAuthService {
     const password = await this.passwordService.encode(obj.password);
 
     try {
-      await this.adapters.profileStore.save({
+      await this.adapters.account.save({
         name: obj.name,
         dob: obj.dob,
         email: obj.email.trim(),
         uuid: uuid(),
         password: password
-      } as c.ProfileEntity);
+      } as c.AccountEntity);
     } catch (e) {
       this.logger.error(e);
       throw new ex.InsertionException('error registering account');
@@ -30,9 +30,7 @@ export class AuthService implements c.IAuthService {
   }
 
   async login(dto: c.LoginPayload): Promise<c.JwtResponse> {
-    const obj = await this.adapters.profileStore.profileByEmail(
-      dto.email.trim()
-    );
+    const obj = await this.adapters.account.accountByEmail(dto.email.trim());
 
     if (!obj) {
       this.logger.error(`${dto.email.trim()} not found`);

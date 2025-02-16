@@ -10,9 +10,9 @@ exports.shorthands = undefined;
  */
 exports.up = (pgm) => {
   pgm.createTable(
-    'profile',
+    'account',
     {
-      profile_id: {
+      account_id: {
         primaryKey: true,
         type: 'BIGSERIAL',
         notNull: true,
@@ -41,5 +41,5 @@ exports.up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 exports.down = (pgm) => {
-  pgm.dropTable('profile', { ifExists: true });
+  pgm.dropTable('account', { ifExists: true });
 };
